@@ -1,0 +1,56 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="bower_components/fastclick/lib/fastclick.js"></script>
+    <script src="bower_components/underscore/underscore-min.js"></script>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery.livequery/dist/jquery.livequery.min.js"></script>
+    <script src="bower_components/knockout/dist/knockout.js"></script>
+    <script src="bower_components/flip/dist/jquery.flip.min.js"></script>
+
+    <link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="batalha.css">
+    <script src="ko-effects.js"></script>
+    <script src="utils.js"></script>
+</head>
+<body>
+<div class="painel-score">
+    <span class="score">Blocos abertos : <span data-bind="text:blocos_abertos"/> </span>
+    <span class="score">Tempo decorrido: <span data-bind="text:tempo_decorrido"></span>s</span>
+</div>
+<div class="tabuleiro">
+    <!-- ko foreach: linhas -->
+    <div class="linha" >
+        <!-- ko foreach: colunas -->
+        <div class="celula" data-bind="click: revela">
+            <div class="pedra" data-bind="flip: visivel">
+                <div class="pedra front">
+                </div>
+                <div class="pedra back" data-bind="style: {'background-image':data}, attr: {id: id}">
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+    <!-- /ko -->
+    <div class="mensagem" data-bind="fadeVisible: ganhou, click: reiniciar">
+        Parabéns! Você venceu!<br>
+        Blocos: <span data-bind="text: blocos_abertos"></span>
+        Tempo: <span data-bind="text: tempo_decorrido"></span>
+    </div>
+    <div class="chase">
+    </div>
+</div>
+<div class="painel-problemas">
+    <span class="score">Problemas</span><br>
+    <!-- ko foreach: problemas -->
+    <img class='score-problema' border="none" data-bind="attr: {src: 'imgs/' + $data + '.jpg', title: $data}" />
+    <!-- /ko -->
+</div>
+<script src="batalha.js"></script>
+</body>
+</html>

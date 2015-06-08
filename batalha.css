@@ -1,0 +1,110 @@
+html, body {
+    height: 100%; /* Necessary for height based sizes */
+}
+body {
+    font-family: Lobster;
+    background-image: url(imgs/restaurant_icons.png);
+    text-align: center;
+}
+.celula {
+    background-color: #adadad;
+    background-image: url(imgs/paper_1.png);
+    margin: 1px;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid #286090;
+    padding: 0;
+    display: none;
+    -webkit-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+}
+
+.tabuleiro {
+    padding-left: 10px;
+}
+
+.score {
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+.painel-problemas {
+    width: 100%;
+    padding-left: 20px;
+}
+.painel-score {
+    margin-bottom: 10px;
+}
+
+.mensagem {
+    display: none;
+    position: absolute;
+    font-size: 30px;
+    top: 0px;
+    background-color: white;
+    border: 1px solid black;
+    cursor: pointer;
+    -webkit-transition: all .5s ease-out;
+    -moz-transition: all .5s ease-out;
+    -ms-transition: all .5s ease-out;
+    -o-transition: all .5s ease-out;
+    transition: all .5s ease-out;
+
+    -webkit-box-shadow: 15px 7px 20px 7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 15px 7px 20px 7px rgba(0,0,0,0.75);
+    box-shadow: 15px 7px 20px 7px rgba(0,0,0,0.75);
+
+    border-radius: 25px 25px 25px 25px;
+    -moz-border-radius: 25px 25px 25px 25px;
+    -webkit-border-radius: 25px 25px 25px 25px;
+    border: 0px solid #000000;
+    padding: 10px;
+}
+.pedra {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back {
+    background-color: white;
+}
+.chase {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 100px;
+    left: 100px;
+    background-image: url("imgs/policia.jpg");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    display: none;
+}
+
+.score-problema {
+    max-width: 48px;
+    max-height: 48px;
+
+    -webkit-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+}
+.objetivo {
+    font-size: large;
+}
+.gotcha {
+    position: absolute;
+    top:0px;
+    left:0px;
+    -webkit-transition: all .5s ease-out;
+    -moz-transition: all .5s ease-out;
+    -ms-transition: all .5s ease-out;
+    -o-transition: all .5s ease-out;
+    transition: all .5s ease-out;
+}
