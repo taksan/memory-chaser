@@ -61,12 +61,15 @@ function BatalhaViewModel()
         this.audio = new Audio(this.somMorador())
     }
 
-    var presas     = ["bandido","incendio","acidente"];
     var cacadorXpresa = {
-        "policia" : new Cacador("policia","bandido","delegacia"),
-        "bombeiro" : new Cacador("bombeiro","incendio","estacao"),
-        "ambulancia" : new Cacador("ambulancia", "acidente","hospital")
+        "policia"          : new Cacador("policia","bandido","delegacia"),
+        "bombeiro"         : new Cacador("bombeiro","incendio","estacao"),
+        "ambulancia"       : new Cacador("ambulancia", "acidente","hospital"),
+        "caminhao-de-lixo" : new Cacador("caminhao-de-lixo", "lixo","lixao")
     }
+    var presas = _.map(cacadorXpresa, function(cacador) {
+        return cacador.presa;
+    })
 
     var nPresas = 2;
     var flatTiles = [];
