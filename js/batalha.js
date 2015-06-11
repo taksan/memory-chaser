@@ -1,38 +1,25 @@
 function BatalhaViewModel()
 {
     var tabuleiro = this;
-    this.imagemMorador = function(item) {
-        return "url(imgs/"+item.morador+'.jpg)';
-    }
-    var totalPecasAMostrar = BOARD_SIZE * BOARD_SIZE;
-    var pecasAVirar = [];
 
     var seq=0;
     function Carta(tab, morador) {
         var self = this;
-        this.data = ko.observable("")
+        this.imagemAtual = ko.observable("")
         this.morador = morador;
-        var imgName = tab.imagemMorador(this);
+        var imgName = morador.imagemMorador();
 
-        self.data(imgName)
+        self.imagemAtual(imgName)
         self.visivel = ko.observable(false)
         self.id="p"+(seq++);
 
         self.mostraCasa = function() {
             $("#"+self.id).disableTransitions();
 
-            self.data(cacadorXpresa[self.morador].imagemCasa())
-        }
-
-        self.somMorador = function() {
-            return cacadorXpresa[self.morador].audio;
+            self.imagemAtual(self.morador.imagemCasa())
         }
 
         this.revela = function() {
-            if (self.visivel())
-                return;
-
-            self.visivel(true);
             tab.abriuBloco(self);
         }
     }
@@ -45,10 +32,10 @@ function BatalhaViewModel()
     }
 
     var cacadorXpresa = {
-        "policia"          : new Cacador("policia","bandido","delegacia"),
-        "bombeiro"         : new Cacador("bombeiro","incendio","estacao"),
-        "ambulancia"       : new Cacador("ambulancia", "acidente","hospital"),
-        "caminhao-de-lixo" : new Cacador("caminhao-de-lixo", "lixo","lixao")
+        "policia"          : new Cacador("policia",          "bandido",  "delegacia"),
+        "bombeiro"         : new Cacador("bombeiro",         "incendio", "estacao"),
+        "ambulancia"       : new Cacador("ambulancia",       "acidente", "hospital"),
+        "caminhao-de-lixo" : new Cacador("caminhao-de-lixo", "lixo",     "lixao")
     }
     var presas = _.map(cacadorXpresa, function(cacador) {
         return cacador.presa;
@@ -61,10 +48,10 @@ function BatalhaViewModel()
     Object.keys(cacadorXpresa).forEach(function(nomeCacador) {
         var j;
         for (j=0; j < numPresasDeCadaTipo; j++) {
-            cartasDoJogo.push(new Carta(tabuleiro, nomeCacador));
-            var nomeDaPresa = cacadorXpresa[nomeCacador].presa;
-            cartasDoJogo.push(new Carta(tabuleiro, nomeDaPresa));
-            tabuleiro.problemas.push(nomeDaPresa);
+            cartasDoJogo.push(new Carta(tabuleiro, cacadorXpresa[nomeCacador]));
+            var presa = cacadorXpresa[nomeCacador].presa;
+            cartasDoJogo.push(new Carta(tabuleiro,presa));
+            tabuleiro.problemas.push(presa.morador);
         }
     })
 
@@ -72,7 +59,7 @@ function BatalhaViewModel()
 
     for (var j=0; j<missing; j++) {
         var n=Math.floor((Math.random() * 2) + 1);
-        cartasDoJogo.push(new Carta(tabuleiro, "cidade"+n));
+        cartasDoJogo.push(new Carta(tabuleiro, new Cidade("cidade"+n)));
     }
     cartasDoJogo = _.shuffle(cartasDoJogo);
 
@@ -107,7 +94,7 @@ function BatalhaViewModel()
         }, tempoParaOJogadorVerAsPecas);
     }, tempoParaEvitarTransicaoDeBaixoParaCima);
 
-    var ultimaPresa = null;
+    var ultimaPresaAberta = null;
 
     function ocultaPecas() {
         var p = arguments
@@ -122,53 +109,61 @@ function BatalhaViewModel()
     this.objetivo = ko.observable();
     this.tempo_decorrido = ko.observable(0);
 
-    this.abriuBloco = function(pecaAberta) {
+    this.abriuBloco = function(cartaAberta) {
+        if (tabuleiro.ganhou())
+            return;
+
+        if (cartaAberta.visivel())
+            return;
+
+        cartaAberta.visivel(true);
+
         this.blocos_abertos(this.blocos_abertos()+1)
 
-        if (presas.contains(pecaAberta.morador)) {
-            if (ultimaPresa) {
-                ocultaPecas(ultimaPresa,pecaAberta);
+        if (cartaAberta.morador.isPresa()) {
+            if (ultimaPresaAberta) {
+                ocultaPecas(ultimaPresaAberta, cartaAberta);
 
-                ultimaPresa = null;
+                ultimaPresaAberta = null;
                 return;
             }
-            ultimaPresa = pecaAberta;
+            ultimaPresaAberta = cartaAberta;
             tabuleiro.procurandoCacador();
             return;
         }
 
-        if (pecaAberta.morador in cacadorXpresa) {
+        if (cartaAberta.morador.isCacador()) {
             var capturado = false;
-            if (ultimaPresa) {
-                var presaDoCacador = cacadorXpresa[pecaAberta.morador].presa;
-                if (presaDoCacador == ultimaPresa.morador) {
+            if (ultimaPresaAberta) {
+                var presaDoCacador = cartaAberta.morador.presa;
+                if (presaDoCacador == ultimaPresaAberta.morador) {
                     capturado = true;
-                    tabuleiro.capture(ultimaPresa, pecaAberta);
+                    tabuleiro.capture(ultimaPresaAberta, cartaAberta);
                 }
                 else {
-                    ocultaPecas(ultimaPresa);
+                    ocultaPecas(ultimaPresaAberta);
                 }
             }
             if (!capturado) {
-                ocultaPecas(pecaAberta);
+                ocultaPecas(cartaAberta);
             }
         }
         else {
-            if (ultimaPresa) {
+            if (ultimaPresaAberta) {
                 (function() {
-                    var presa = ultimaPresa;
+                    var presa = ultimaPresaAberta;
                     setTimeout(function () {
                         presa.visivel(false);
                     }, 1000)
                 })()
             }
         }
-        ultimaPresa = null;
+        ultimaPresaAberta = null;
     }
 
-    this.capture = function(presa, cacador) {
-        tabuleiro.ganhaPonto(ultimaPresa.morador);
-        var cacadorCelula = $("#"+cacador.id)
+    this.capture = function(presa, cartaCacador) {
+        tabuleiro.ganhaPonto(ultimaPresaAberta.morador);
+        var cacadorCelula = $("#"+cartaCacador.id)
 
         var cacadorAnimado = $(".chase")
         cacadorAnimado.show();
@@ -179,8 +174,10 @@ function BatalhaViewModel()
         });
         cacadorAnimado.width(cacadorCelula.width())
         cacadorAnimado.height(cacadorCelula.height())
-        cacadorAnimado.css("background-image", tabuleiro.imagemMorador(cacador));
-        cacador.mostraCasa();
+
+        var cacador = cartaCacador.morador;
+        cacadorAnimado.css("background-image", cacador.imagemMorador());
+        cartaCacador.mostraCasa();
 
         var pr = $("#"+presa.id)
         var som = cacador.somMorador();
@@ -190,7 +187,7 @@ function BatalhaViewModel()
             cacadorAnimado.animate({top: pr.offset().top},null,null, function(){
                 tabuleiro.procurandoBandido();
                 pr.disableTransitions();
-                pr.css("background-image", tabuleiro.imagemMorador(cacador));
+                pr.css("background-image", cacador.imagemMorador());
                 pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
 
                 cacadorAnimado.hide();
@@ -208,7 +205,7 @@ function BatalhaViewModel()
 
     this.ganhaPonto = function(problemaResolvido) {
         for(var index=0; index < tabuleiro.problemas().length; index++) {
-            if (tabuleiro.problemas()[index] == problemaResolvido) {
+            if (tabuleiro.problemas()[index] == problemaResolvido.morador) {
                 break;
             }
         }
