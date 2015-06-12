@@ -1,7 +1,27 @@
+function Morador(nome) {
+    var self=this;
+    this.morador = nome;
+    this.imagemMorador = function() {
+        return "url("+ self.nomeImagemMorador() + ")";
+    }
+
+    this.nomeImagemMorador = function() {
+        return "imgs/"+nome+".jpg";
+    }
+
+    this.isPresa = function() {
+        return false;
+    }
+
+    this.isCacador = function() {
+        return false;
+    }
+}
+
 function Cacador(nome, presa, casa) {
     var self = this;
+    $.extend(self, new Morador(nome));
 
-    this.morador = nome;
     this.presa = new Presa(presa);
     this.casa = casa;
 
@@ -13,14 +33,6 @@ function Cacador(nome, presa, casa) {
         return self.audio;
     }
 
-    this.imagemMorador = function() {
-        return "url(imgs/"+self.morador+'.jpg)';
-    }
-
-    this.isPresa = function() {
-        return false;
-    }
-
     this.isCacador = function() {
         return true;
     }
@@ -30,34 +42,14 @@ function Cacador(nome, presa, casa) {
 
 function Presa(nome) {
     var self = this;
-    this.morador = nome;
-
-    this.imagemMorador = function() {
-        return "url(imgs/"+self.morador+'.jpg)';
-    }
+    $.extend(self, new Morador(nome))
 
     this.isPresa = function() {
         return true;
-    }
-
-    this.isCacador = function() {
-        return false;
     }
 }
 
 function Cidade(nome) {
     var self = this;
-    this.morador = nome;
-
-    this.imagemMorador = function() {
-        return "url(imgs/"+self.morador+'.jpg)';
-    }
-
-    this.isPresa = function() {
-        return false;
-    }
-
-    this.isCacador = function() {
-        return false;
-    }
+    $.extend(self, new Morador(nome))
 }

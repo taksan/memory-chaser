@@ -15,7 +15,6 @@ function BatalhaViewModel()
 
         self.mostraCasa = function() {
             $("#"+self.id).disableTransitions();
-
             self.imagemAtual(self.morador.imagemCasa())
         }
 
@@ -31,25 +30,25 @@ function BatalhaViewModel()
         }
     }
 
-    var cacadorXpresa = {
-        "policia"          : new Cacador("policia",          "bandido",  "delegacia"),
-        "bombeiro"         : new Cacador("bombeiro",         "incendio", "estacao"),
-        "ambulancia"       : new Cacador("ambulancia",       "acidente", "hospital"),
-        "caminhao-de-lixo" : new Cacador("caminhao-de-lixo", "lixo",     "lixao")
-    }
-    var presas = _.map(cacadorXpresa, function(cacador) {
-        return cacador.presa;
-    })
+    var cacadorXpresa = [
+        new Cacador("policia",          "bandido",  "delegacia"),
+        new Cacador("bombeiro",         "incendio", "estacao"),
+        new Cacador("ambulancia",       "acidente", "hospital"),
+        new Cacador("caminhao-de-lixo", "lixo",     "lixao")
+    ]
 
     var numPresasDeCadaTipo = 2;
     var cartasDoJogo = [];
     this.problemas = ko.observableArray();
 
-    Object.keys(cacadorXpresa).forEach(function(nomeCacador) {
+    cacadorXpresa.forEach(function(cacador) {
+        new Image(cacador.nomeImagemMorador());
+        new Image(cacador.presa.nomeImagemMorador());
+
         var j;
         for (j=0; j < numPresasDeCadaTipo; j++) {
-            cartasDoJogo.push(new Carta(tabuleiro, cacadorXpresa[nomeCacador]));
-            var presa = cacadorXpresa[nomeCacador].presa;
+            cartasDoJogo.push(new Carta(tabuleiro, cacador));
+            var presa = cacador.presa;
             cartasDoJogo.push(new Carta(tabuleiro,presa));
             tabuleiro.problemas.push(presa.morador);
         }
@@ -138,7 +137,7 @@ function BatalhaViewModel()
                 var presaDoCacador = cartaAberta.morador.presa;
                 if (presaDoCacador == ultimaPresaAberta.morador) {
                     capturado = true;
-                    tabuleiro.capture(ultimaPresaAberta, cartaAberta);
+                    tabuleiro.capturar(ultimaPresaAberta, cartaAberta);
                 }
                 else {
                     ocultaPecas(ultimaPresaAberta);
@@ -161,8 +160,8 @@ function BatalhaViewModel()
         ultimaPresaAberta = null;
     }
 
-    this.capture = function(presa, cartaCacador) {
-        tabuleiro.ganhaPonto(ultimaPresaAberta.morador);
+    this.capturar = function(presa, cartaCacador) {
+        tabuleiro.marcaPonto(ultimaPresaAberta.morador);
         var cacadorCelula = $("#"+cartaCacador.id)
 
         var cacadorAnimado = $(".chase")
@@ -203,7 +202,7 @@ function BatalhaViewModel()
         window.location.reload()
     }
 
-    this.ganhaPonto = function(problemaResolvido) {
+    this.marcaPonto = function(problemaResolvido) {
         for(var index=0; index < tabuleiro.problemas().length; index++) {
             if (tabuleiro.problemas()[index] == problemaResolvido.morador) {
                 break;
