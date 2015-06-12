@@ -4,23 +4,9 @@ function inicializaAjustesDinamicosDoDom() {
     $(function() {
         FastClick.attach(document.body);
     });
-    var tamPeca = 0;
-    $(".celula").livequery(function() {
-        $(this).css("display","inline-block")
-        $(this).width(tamPeca)
-        $(this).height(tamPeca)
-    })
-
-    $(".pedra").livequery(function() {
-        $(this).width(tamPeca)
-        $(this).height(tamPeca)
-    })
-
-    $(".gotcha").livequery(function() {
-        $(this).css("max-width",tamPeca/3);
-    })
 
     $(function() {
+        var tamPeca = 0;
         var padding = 10;
         var alturaMax= window.innerHeight -
             $(".painel-problemas").height() - $(".painel-score").height() - 64 - padding;
@@ -35,6 +21,21 @@ function inicializaAjustesDinamicosDoDom() {
         var msg = $(".mensagem");
         msg.offset({left: (window.innerWidth-msg.width())/2});
         msg.offset({top: ((BOARD_SIZE*tamPeca)-msg.height())/2});
+
+        $(".celula").livequery(function() {
+            $(this).css("display","inline-block")
+            $(this).width(tamPeca)
+            $(this).height(tamPeca)
+        })
+
+        $(".pedra").livequery(function() {
+            $(this).width(tamPeca)
+            $(this).height(tamPeca)
+        })
+
+        $(".gotcha").livequery(function() {
+            $(this).css("max-width",tamPeca/3);
+        })
     })
 }
 inicializaAjustesDinamicosDoDom();

@@ -1,10 +1,8 @@
-html, body {
-    height: 100%; /* Necessary for height based sizes */
-}
 body {
     font-family: Lobster;
     background-image: url(../imgs/restaurant_icons.png);
     text-align: center;
+    overflow-x: hidden;
 }
 .celula {
     background-color: #adadad;
