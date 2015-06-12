@@ -1,34 +1,6 @@
 function BatalhaViewModel()
 {
-    var tabuleiro = this;
-
-    var seq=0;
-    function Carta(tab, morador) {
-        var self = this;
-        this.imagemAtual = ko.observable("")
-        this.morador = morador;
-        var imgName = morador.imagemMorador();
-
-        self.imagemAtual(imgName)
-        self.visivel = ko.observable(false)
-        self.id="p"+(seq++);
-
-        self.mostraCasa = function() {
-            $("#"+self.id).disableTransitions();
-            self.imagemAtual(self.morador.imagemCasa())
-        }
-
-        this.revela = function() {
-            tab.abriuBloco(self);
-        }
-    }
-
-    function Linha() {
-        this.colunas = ko.observableArray();
-        this.adicionaColuna = function(celula) {
-            this.colunas.push(celula)
-        }
-    }
+    var self = this;
 
     var cacadorXpresa = [
         new Cacador("policia",          "bandido",  "delegacia"),
@@ -42,15 +14,11 @@ function BatalhaViewModel()
     this.problemas = ko.observableArray();
 
     cacadorXpresa.forEach(function(cacador) {
-        new Image(cacador.nomeImagemMorador());
-        new Image(cacador.presa.nomeImagemMorador());
-
-        var j;
-        for (j=0; j < numPresasDeCadaTipo; j++) {
-            cartasDoJogo.push(new Carta(tabuleiro, cacador));
+        for (var j=0; j < numPresasDeCadaTipo; j++) {
+            cartasDoJogo.push(new Carta(self, cacador));
             var presa = cacador.presa;
-            cartasDoJogo.push(new Carta(tabuleiro,presa));
-            tabuleiro.problemas.push(presa.morador);
+            cartasDoJogo.push(new Carta(self,presa));
+            self.problemas.push(presa.morador);
         }
     })
 
@@ -58,7 +26,7 @@ function BatalhaViewModel()
 
     for (var j=0; j<missing; j++) {
         var n=Math.floor((Math.random() * 2) + 1);
-        cartasDoJogo.push(new Carta(tabuleiro, new Cidade("cidade"+n)));
+        cartasDoJogo.push(new Carta(self, new Cidade("cidade"+n)));
     }
     cartasDoJogo = _.shuffle(cartasDoJogo);
 
@@ -67,8 +35,8 @@ function BatalhaViewModel()
     cartasDoJogo.forEach(function(carta) {
         nLinha=(nLinha+1)%BOARD_SIZE;
         if (nLinha == 0)
-            tabuleiro.linhas.push(new Linha())
-        _.last(tabuleiro.linhas()).adicionaColuna(carta);
+            self.linhas.push(new Linha())
+        _.last(self.linhas()).adicionaColuna(carta);
     })
 
     var tempoParaOJogadorVerAsPecas = 8000;
@@ -84,11 +52,11 @@ function BatalhaViewModel()
                 carta.visivel(false);
             })
             var clockHandle = setInterval(function() {
-                if (tabuleiro.ganhou()) {
+                if (self.ganhou()) {
                     clearInterval(clockHandle)
                     return;
                 }
-                tabuleiro.tempo_decorrido(tabuleiro.tempo_decorrido()+1);
+                self.tempo_decorrido(self.tempo_decorrido()+1);
             }, tempoDoRelogio_1segundo)
         }, tempoParaOJogadorVerAsPecas);
     }, tempoParaEvitarTransicaoDeBaixoParaCima);
@@ -109,7 +77,7 @@ function BatalhaViewModel()
     this.tempo_decorrido = ko.observable(0);
 
     this.abriuBloco = function(cartaAberta) {
-        if (tabuleiro.ganhou())
+        if (self.ganhou())
             return;
 
         if (cartaAberta.visivel())
@@ -127,7 +95,7 @@ function BatalhaViewModel()
                 return;
             }
             ultimaPresaAberta = cartaAberta;
-            tabuleiro.procurandoCacador();
+            self.procurandoCacador();
             return;
         }
 
@@ -137,7 +105,7 @@ function BatalhaViewModel()
                 var presaDoCacador = cartaAberta.morador.presa;
                 if (presaDoCacador == ultimaPresaAberta.morador) {
                     capturado = true;
-                    tabuleiro.capturar(ultimaPresaAberta, cartaAberta);
+                    self.capturar(ultimaPresaAberta, cartaAberta);
                 }
                 else {
                     ocultaPecas(ultimaPresaAberta);
@@ -161,7 +129,7 @@ function BatalhaViewModel()
     }
 
     this.capturar = function(presa, cartaCacador) {
-        tabuleiro.marcaPonto(ultimaPresaAberta.morador);
+        self.marcaPonto(ultimaPresaAberta.morador);
         var cacadorCelula = $("#"+cartaCacador.id)
 
         var cacadorAnimado = $(".chase")
@@ -184,7 +152,7 @@ function BatalhaViewModel()
         cacadorAnimado.animate({left: pr.offset().left},null,null, function()
         {
             cacadorAnimado.animate({top: pr.offset().top},null,null, function(){
-                tabuleiro.procurandoBandido();
+                self.procurandoBandido();
                 pr.disableTransitions();
                 pr.css("background-image", cacador.imagemMorador());
                 pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
@@ -203,24 +171,24 @@ function BatalhaViewModel()
     }
 
     this.marcaPonto = function(problemaResolvido) {
-        for(var index=0; index < tabuleiro.problemas().length; index++) {
-            if (tabuleiro.problemas()[index] == problemaResolvido.morador) {
+        for(var index=0; index < self.problemas().length; index++) {
+            if (self.problemas()[index] == problemaResolvido.morador) {
                 break;
             }
         }
-        tabuleiro.problemas.splice(index,1);
+        self.problemas.splice(index,1);
     }
 
     this.ganhou = ko.pureComputed(function() {
-        return tabuleiro.problemas().length == 0;
+        return self.problemas().length == 0;
     })
 
     this.procurandoBandido = function() {
-        tabuleiro.objetivo("Encontre um problema para resolver");
+        self.objetivo("Encontre um problema para resolver");
     }
 
     this.procurandoCacador = function() {
-        tabuleiro.objetivo("Encontre alguém para resolver esse problema");
+        self.objetivo("Encontre alguém para resolver esse problema");
     }
 
     this.procurandoBandido();

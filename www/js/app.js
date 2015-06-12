@@ -20,19 +20,21 @@ function inicializaAjustesDinamicosDoDom() {
         $(this).css("max-width",tamPeca/3);
     })
 
-    var padding = 10;
-    var alturaMax= window.innerHeight -
-        $(".painel-problemas").height() - $(".painel-score").height() - 64 - padding;
+    $(function() {
+        var padding = 10;
+        var alturaMax= window.innerHeight -
+            $(".painel-problemas").height() - $(".painel-score").height() - 64 - padding;
 
-    var larguraMax= window.innerWidth - padding;
-    if (alturaMax > larguraMax)
-        tamPeca = larguraMax / BOARD_SIZE;
-    else
-        tamPeca = alturaMax / BOARD_SIZE;
-    tamPeca -= 12;
+        var larguraMax= window.innerWidth - padding;
+        if (alturaMax > larguraMax)
+            tamPeca = larguraMax / BOARD_SIZE;
+        else
+            tamPeca = alturaMax / BOARD_SIZE;
+        tamPeca -= 12;
 
-    var msg = $(".mensagem");
-    msg.offset({left: (window.innerWidth-msg.width())/2});
-    msg.offset({top: ((BOARD_SIZE*tamPeca)-msg.height())/2});
+        var msg = $(".mensagem");
+        msg.offset({left: (window.innerWidth-msg.width())/2});
+        msg.offset({top: ((BOARD_SIZE*tamPeca)-msg.height())/2});
+    })
 }
 inicializaAjustesDinamicosDoDom();
