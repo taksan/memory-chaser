@@ -10,12 +10,11 @@ body {
     margin: 1px;
     cursor: pointer;
     text-align: center;
-    border: 1px solid #286090;
+    border: 1px solid rgba(0,0,0,0.75);
+    border-left: 1px solid rgba(0,0,0,.1);
+    border-top: 1px solid rgba(0,0,0,.1);
     padding: 0;
     display: none;
-    -webkit-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
-    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
 }
 
 .tabuleiro {
@@ -68,6 +67,11 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.back {
+    border-right: 1px solid rgba(0,0,0,.75)
+}
+
 .back {
     background-color: white;
 }
@@ -89,9 +93,9 @@ body {
     max-width: 48px;
     max-height: 48px;
 
-    -webkit-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
-    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.75);
+    border: 1px solid rgba(0,0,0,0.75);
+    border-left: 1px solid rgba(0,0,0,.1);
+    border-top: 1px solid rgba(0,0,0,.1);
 }
 .objetivo {
     font-size: large;

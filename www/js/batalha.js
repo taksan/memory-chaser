@@ -22,7 +22,7 @@ function BatalhaViewModel()
         }
     })
 
-    var missing = (BOARD_SIZE*BOARD_SIZE) - cartasDoJogo.length;
+    var missing = (app.BOARD_SIZE * app.BOARD_SIZE) - cartasDoJogo.length;
 
     for (var j=0; j<missing; j++) {
         var n=Math.floor((Math.random() * 2) + 1);
@@ -33,7 +33,7 @@ function BatalhaViewModel()
     this.linhas = ko.observableArray();
     var nLinha=-1;
     cartasDoJogo.forEach(function(carta) {
-        nLinha=(nLinha+1)%BOARD_SIZE;
+        nLinha = (nLinha+1) % app.BOARD_SIZE;
         if (nLinha == 0)
             self.linhas.push(new Linha())
         _.last(self.linhas()).adicionaColuna(carta);
@@ -41,13 +41,13 @@ function BatalhaViewModel()
 
     var tempoParaOJogadorVerAsPecas = 8000;
     var tempoParaEvitarTransicaoDeBaixoParaCima = 400;
-    setTimeout(function() {
+    app.defer(function() {
         cartasDoJogo.forEach(function(carta) {
             carta.visivel(true);
         })
 
         var tempoDoRelogio_1segundo = 1000;
-        setTimeout(function() {
+        app.defer(function() {
             cartasDoJogo.forEach(function(carta) {
                 carta.visivel(false);
             })
@@ -65,7 +65,7 @@ function BatalhaViewModel()
 
     function ocultaPecas() {
         var p = arguments
-        setTimeout(function() {
+        app.defer(function() {
             _.each(p,function(peca) {
                 peca.visivel(false);
             });
@@ -119,7 +119,7 @@ function BatalhaViewModel()
             if (ultimaPresaAberta) {
                 (function() {
                     var presa = ultimaPresaAberta;
-                    setTimeout(function () {
+                    app.defer(function () {
                         presa.visivel(false);
                     }, 1000)
                 })()
@@ -146,9 +146,8 @@ function BatalhaViewModel()
         cacadorAnimado.css("background-image", cacador.imagemMorador());
         cartaCacador.mostraCasa();
 
-        var pr = $("#"+presa.id)
-        var som = cacador.somMorador();
-        som.play();
+        var pr = $("#"+presa.id);
+        app.play(cacador.somMorador());
         cacadorAnimado.animate({left: pr.offset().left},null,null, function()
         {
             cacadorAnimado.animate({top: pr.offset().top},null,null, function(){
@@ -158,7 +157,7 @@ function BatalhaViewModel()
                 pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
 
                 cacadorAnimado.hide();
-                setTimeout(function() {
+                app.defer(function() {
                     som.pause();
                     som.currentTime=0;
                 },1000)
