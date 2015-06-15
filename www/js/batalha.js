@@ -78,7 +78,7 @@ function BatalhaViewModel()
         self.jogando(true);
     }
 
-    var ultimaPresaAberta = null;
+    var cartaDaUltimaPresaAberta = null;
 
     function ocultaPecas() {
         var p = arguments
@@ -88,7 +88,7 @@ function BatalhaViewModel()
             });
         },1000)
     }
-
+    var somCartaVirando = new Audio("sounds/carta-virando.mp3");
     this.abriuBloco = function(cartaAberta) {
         if (self.ganhou())
             return;
@@ -97,30 +97,31 @@ function BatalhaViewModel()
             return;
 
         cartaAberta.visivel(true);
+        app.play(somCartaVirando);
 
-        this.blocos_abertos(this.blocos_abertos()+1)
+        this.blocos_abertos(this.blocos_abertos() + 1)
 
         if (cartaAberta.morador.isPresa()) {
-            if (ultimaPresaAberta) {
-                ocultaPecas(ultimaPresaAberta, cartaAberta);
+            if (cartaDaUltimaPresaAberta) {
+                ocultaPecas(cartaDaUltimaPresaAberta, cartaAberta);
 
-                ultimaPresaAberta = null;
+                cartaDaUltimaPresaAberta = null;
                 return;
             }
-            ultimaPresaAberta = cartaAberta;
+            cartaDaUltimaPresaAberta = cartaAberta;
             return;
         }
 
         if (cartaAberta.morador.isCacador()) {
             var capturado = false;
-            if (ultimaPresaAberta) {
+            if (cartaDaUltimaPresaAberta) {
                 var presaDoCacador = cartaAberta.morador.presa;
-                if (presaDoCacador == ultimaPresaAberta.morador) {
+                if (presaDoCacador == cartaDaUltimaPresaAberta.morador) {
                     capturado = true;
-                    self.capturar(ultimaPresaAberta, cartaAberta);
+                    self.capturar(cartaDaUltimaPresaAberta, cartaAberta);
                 }
                 else {
-                    ocultaPecas(ultimaPresaAberta);
+                    ocultaPecas(cartaDaUltimaPresaAberta);
                 }
             }
             if (!capturado) {
@@ -128,20 +129,16 @@ function BatalhaViewModel()
             }
         }
         else {
-            if (ultimaPresaAberta) {
-                (function() {
-                    var presa = ultimaPresaAberta;
-                    app.defer(function () {
-                        presa.visivel(false);
-                    }, 1000)
-                })()
-            }
+            if (cartaDaUltimaPresaAberta)
+                cartaDaUltimaPresaAberta.oculta();
+            cartaAberta.marcaAberta();
         }
-        ultimaPresaAberta = null;
+
+        cartaDaUltimaPresaAberta = null;
     }
 
     this.capturar = function(presa, cartaCacador) {
-        self.marcaPonto(ultimaPresaAberta.morador);
+        self.marcaPonto(cartaDaUltimaPresaAberta.morador);
         var cacadorCelula = $("#"+cartaCacador.id)
 
         var cacadorAnimado = $(".chase")
@@ -158,17 +155,15 @@ function BatalhaViewModel()
         cacadorAnimado.css("background-image", cacador.imagemMorador());
         cartaCacador.mostraCasa();
 
-        var pr = $("#"+presa.id);
+        var posicaoDaPresa = $("#"+presa.id).offset();
         var som = cacador.somMorador();
         app.play(som);
-        cacadorAnimado.animate({left: pr.offset().left},null,null, function()
+        cacadorAnimado.animate({left: posicaoDaPresa.left},null,null, function()
         {
-            cacadorAnimado.animate({top: pr.offset().top},null,null, function(){
-                pr.disableTransitions();
-                pr.css("background-image", cacador.imagemMorador());
-                pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
-
+            cacadorAnimado.animate({top: posicaoDaPresa.top},null,null, function(){
                 cacadorAnimado.hide();
+                presa.marcaCapturado(cacador);
+
                 app.defer(function() {
                     som.pause();
                     som.currentTime=0;

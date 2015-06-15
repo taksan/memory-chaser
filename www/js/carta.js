@@ -12,6 +12,7 @@ function Carta(tab, morador) {
     self.mostraCasa = function() {
         $("#"+self.id).disableTransitions();
         self.imagemAtual(self.morador.imagemCasa())
+        self.marcaAberta();
     }
 
     self.marcaCapturado = function(cacador) {
