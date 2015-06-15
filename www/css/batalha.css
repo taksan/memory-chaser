@@ -2,7 +2,7 @@ body {
     font-family: Lobster;
     background-image: url(../imgs/fundo-cidade.jpg);
     text-align: center;
-    overflow-x: hidden;
+    transform: translateZ(0)
 }
 .celula {
     background-color: #adadad;
@@ -17,17 +17,12 @@ body {
     display: none;
 }
 
-.tabuleiro {
-    padding-left: 10px;
-}
-
 .score {
     font-size: 20px;
 }
 
 .painel-problemas {
     width: 100%;
-    padding-left: 20px;
 }
 .painel-score {
     margin-bottom: 10px;
