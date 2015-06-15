@@ -7,6 +7,7 @@ jQuery.fn.extend({
            OTransition      : '',
            transition       : '',
        },"")
+       return this;
    }
 });
 

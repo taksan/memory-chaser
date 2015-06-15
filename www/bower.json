@@ -8,6 +8,7 @@
     "toastr": "~2.1.1",
     "flip": "~1.0.1",
     "underscore": "~1.8.3",
-    "fastclick": "~1.0.6"
+    "fastclick": "~1.0.6",
+    "velocity": "~1.2.2"
   }
 }
