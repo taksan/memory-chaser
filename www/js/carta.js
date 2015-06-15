@@ -19,8 +19,11 @@ function Carta(tab, morador) {
         var pr = $("#"+self.id)
         pr.disableTransitions();
         pr.css("background-image", cacador.imagemMorador());
-        pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
+        //pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
         pr.css("opacity", "0.5");
+        var $img = $("<img class='gotcha' src='../imgs/ok.png'>");
+        $img.offset(pr.offset())
+        $("body").append($img)
     }
 
     self.marcaAberta = function() {

@@ -15,7 +15,7 @@
     <script src="bower_components/flip/dist/jquery.flip.min.js"></script>
 
     <link href="css/lobster.css" rel="stylesheet" type="text/css">
-
+    <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/batalha.css">
     <script src="js/app.js"></script>
     <script src="js/moradores.js"></script>
@@ -49,14 +49,14 @@
         Blocos: <span data-bind="text: blocos_abertos"></span>
         Tempo: <span data-bind="text: tempo_decorrido"></span>
     </div>
-    <div class="chase">
-    </div>
 </div>
 <div class="painel-problemas">
     <span class="score">Problemas</span><br>
     <!-- ko foreach: problemas -->
     <img class='score-problema' border="none" data-bind="attr: {src: 'imgs/' + $data + '.jpg', title: $data}" />
     <!-- /ko -->
+</div>
+<div class="chase">
 </div>
 </body>
 </html>

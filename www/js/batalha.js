@@ -155,12 +155,13 @@ function BatalhaViewModel()
         cacadorAnimado.css("background-image", cacador.imagemMorador());
         cartaCacador.mostraCasa();
 
-        var posicaoDaPresa = $("#"+presa.id).offset();
+        var posicaoDaPresa = $("#"+presa.id).parent().parent().offset();
         var som = cacador.somMorador();
         app.play(som);
-        cacadorAnimado.velocity({left: posicaoDaPresa.left}, 800, null, function()
-        {
-            cacadorAnimado.velocity({top: posicaoDaPresa.top},800, null, function(){
+        cacadorAnimado
+            .velocity({left: posicaoDaPresa.left}, 800, "easeInQuad")
+            .velocity({top:  posicaoDaPresa.top}, 800, "easeInQuad",
+            function(){
                 cacadorAnimado.hide();
                 presa.marcaCapturado(cacador);
 
@@ -169,7 +170,6 @@ function BatalhaViewModel()
                     som.currentTime=0;
                 },1000)
             });
-        })
     }
 
     this.reiniciar = function() {
