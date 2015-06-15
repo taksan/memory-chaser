@@ -158,9 +158,9 @@ function BatalhaViewModel()
         var posicaoDaPresa = $("#"+presa.id).offset();
         var som = cacador.somMorador();
         app.play(som);
-        cacadorAnimado.animate({left: posicaoDaPresa.left},null,null, function()
+        cacadorAnimado.animate({left: posicaoDaPresa.left}, 800, null, function()
         {
-            cacadorAnimado.animate({top: posicaoDaPresa.top},null,null, function(){
+            cacadorAnimado.animate({top: posicaoDaPresa.top},800, null, function(){
                 cacadorAnimado.hide();
                 presa.marcaCapturado(cacador);
 

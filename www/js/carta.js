@@ -25,8 +25,8 @@ function Carta(tab, morador) {
 
     self.marcaAberta = function() {
         app.defer(function() {
-            $("#"+self.id).css("opacity", "0.5");
-        }, 1000)
+            $("#"+self.id).disableTransitions().css("opacity", "0.5");
+        },500)
 
     }
 
