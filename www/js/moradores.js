@@ -1,12 +1,15 @@
-function Morador(nome) {
+function Morador(nome, ext) {
     var self=this;
     this.morador = nome;
+    if (typeof ext == 'undefined')
+        ext = "jpg";
+
     this.imagemMorador = function() {
         return "url("+ self.nomeImagemMorador() + ")";
     }
 
     this.nomeImagemMorador = function() {
-        return "imgs/"+nome+".jpg";
+        return "imgs/"+nome+"." + ext;
     }
 
     this.isPresa = function() {
@@ -16,11 +19,12 @@ function Morador(nome) {
     this.isCacador = function() {
         return false;
     }
+    new Image().src=self.nomeImagemMorador();//preload image
 }
 
 function Cacador(nome, presa, casa) {
     var self = this;
-    $.extend(self, new Morador(nome));
+    $.extend(self, new Morador(nome, "png"));
 
     this.presa = new Presa(presa);
     this.casa = casa;

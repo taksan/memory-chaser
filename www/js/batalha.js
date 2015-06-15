@@ -3,63 +3,80 @@ function BatalhaViewModel()
     var self = this;
 
     var cacadorXpresa = [
-        new Cacador("policia",          "bandido",  "delegacia"),
-        new Cacador("bombeiro",         "incendio", "estacao"),
-        new Cacador("ambulancia",       "acidente", "hospital"),
-        new Cacador("caminhao-de-lixo", "lixo",     "lixao")
+        new Cacador("policia",          "bandido",        "delegacia"),
+        new Cacador("bombeiro",         "incendio",       "estacao"),
+        new Cacador("ambulancia",       "acidente",       "hospital"),
+        new Cacador("caminhao-de-lixo", "lixo",           "lixao"),
+        new Cacador("onibus",           "passageiros",    "garagem"),
+        new Cacador("guincho",          "carro-quebrado", "oficina")
     ]
-
-    var numPresasDeCadaTipo = 2;
-    var cartasDoJogo = [];
-    this.problemas = ko.observableArray();
-
-    cacadorXpresa.forEach(function(cacador) {
-        for (var j=0; j < numPresasDeCadaTipo; j++) {
-            cartasDoJogo.push(new Carta(self, cacador));
-            var presa = cacador.presa;
-            cartasDoJogo.push(new Carta(self,presa));
-            self.problemas.push(presa.morador);
-        }
-    })
-
-    var missing = (app.BOARD_SIZE * app.BOARD_SIZE) - cartasDoJogo.length;
-
-    for (var j=0; j<missing; j++) {
-        var n=Math.floor((Math.random() * 2) + 1);
-        cartasDoJogo.push(new Carta(self, new Cidade("cidade"+n)));
-    }
-    cartasDoJogo = _.shuffle(cartasDoJogo);
-
+    var clockHandle = null;
     this.linhas = ko.observableArray();
-    var nLinha=-1;
-    cartasDoJogo.forEach(function(carta) {
-        nLinha = (nLinha+1) % app.BOARD_SIZE;
-        if (nLinha == 0)
-            self.linhas.push(new Linha())
-        _.last(self.linhas()).adicionaColuna(carta);
-    })
+    this.problemas = ko.observableArray();
+    this.blocos_abertos  = ko.observable(0);
+    this.tempo_decorrido = ko.observable(0);
+    this.jogando = ko.observable(false);
 
-    var tempoParaOJogadorVerAsPecas = 8000;
-    var tempoParaEvitarTransicaoDeBaixoParaCima = 400;
-    app.defer(function() {
-        cartasDoJogo.forEach(function(carta) {
-            carta.visivel(true);
+    this.iniciar = function() {
+        self.jogando(false);
+        self.linhas([])
+        self.problemas([])
+        self.blocos_abertos(0);
+        self.tempo_decorrido(0);
+
+        var numPresasDeCadaTipo = 1;
+        var cartasDoJogo = [];
+        clearInterval(clockHandle)
+
+        cacadorXpresa.forEach(function(cacador) {
+            for (var j=0; j < numPresasDeCadaTipo; j++) {
+                cartasDoJogo.push(new Carta(self, cacador));
+                var presa = cacador.presa;
+                cartasDoJogo.push(new Carta(self,presa));
+                self.problemas.push(presa.morador);
+            }
         })
 
-        var tempoDoRelogio_1segundo = 1000;
+        var missing = (app.BOARD_SIZE * app.BOARD_SIZE) - cartasDoJogo.length;
+
+        for (var j=0; j<missing; j++) {
+            var n=Math.floor((Math.random() * 2) + 1);
+            cartasDoJogo.push(new Carta(self, new Cidade("cidade"+n)));
+        }
+        cartasDoJogo = _.shuffle(cartasDoJogo);
+
+
+        var nLinha=-1;
+        cartasDoJogo.forEach(function(carta) {
+            nLinha = (nLinha+1) % app.BOARD_SIZE;
+            if (nLinha == 0)
+                self.linhas.push(new Linha())
+            _.last(self.linhas()).adicionaColuna(carta);
+        })
+
+        var tempoParaOJogadorVerAsPecas = 8000;
+        var tempoParaEvitarTransicaoDeBaixoParaCima = 400;
         app.defer(function() {
             cartasDoJogo.forEach(function(carta) {
-                carta.visivel(false);
+                carta.visivel(true);
             })
-            var clockHandle = setInterval(function() {
-                if (self.ganhou()) {
-                    clearInterval(clockHandle)
-                    return;
-                }
-                self.tempo_decorrido(self.tempo_decorrido()+1);
-            }, tempoDoRelogio_1segundo)
-        }, tempoParaOJogadorVerAsPecas);
-    }, tempoParaEvitarTransicaoDeBaixoParaCima);
+
+            var tempoDoRelogio_1segundo = 1000;
+            app.defer(function() {
+                cartasDoJogo.forEach(function(carta) {
+                    carta.visivel(false);
+                })
+                clockHandle = setInterval(function() {
+                    if (self.ganhou()) {
+                        clearInterval(clockHandle)
+                        return;
+                    }
+                    self.tempo_decorrido(self.tempo_decorrido()+1);
+                }, tempoDoRelogio_1segundo)
+            }, tempoParaOJogadorVerAsPecas);
+        }, tempoParaEvitarTransicaoDeBaixoParaCima);
+        self.jogando(true);
+    }
 
     var ultimaPresaAberta = null;
 
@@ -71,10 +88,6 @@ function BatalhaViewModel()
             });
         },1000)
     }
-
-    this.blocos_abertos  = ko.observable(0);
-    this.objetivo = ko.observable();
-    this.tempo_decorrido = ko.observable(0);
 
     this.abriuBloco = function(cartaAberta) {
         if (self.ganhou())
@@ -95,7 +108,6 @@ function BatalhaViewModel()
                 return;
             }
             ultimaPresaAberta = cartaAberta;
-            self.procurandoCacador();
             return;
         }
 
@@ -147,11 +159,11 @@ function BatalhaViewModel()
         cartaCacador.mostraCasa();
 
         var pr = $("#"+presa.id);
-        app.play(cacador.somMorador());
+        var som = cacador.somMorador();
+        app.play(som);
         cacadorAnimado.animate({left: pr.offset().left},null,null, function()
         {
             cacadorAnimado.animate({top: pr.offset().top},null,null, function(){
-                self.procurandoBandido();
                 pr.disableTransitions();
                 pr.css("background-image", cacador.imagemMorador());
                 pr.append($("<img class='gotcha' src='../imgs/ok.png'>"));
@@ -166,7 +178,7 @@ function BatalhaViewModel()
     }
 
     this.reiniciar = function() {
-        window.location.reload()
+        self.iniciar();
     }
 
     this.marcaPonto = function(problemaResolvido) {
@@ -179,20 +191,12 @@ function BatalhaViewModel()
     }
 
     this.ganhou = ko.pureComputed(function() {
-        return self.problemas().length == 0;
+        return self.jogando() &&  self.problemas().length == 0;
     })
 
-    this.procurandoBandido = function() {
-        self.objetivo("Encontre um problema para resolver");
-    }
-
-    this.procurandoCacador = function() {
-        self.objetivo("Encontre alguém para resolver esse problema");
-    }
-
-    this.procurandoBandido();
+    self.iniciar();
 }
-
+var memoryChase = new BatalhaViewModel();
 $(function() {
-    ko.applyBindings(new BatalhaViewModel());
+    ko.applyBindings(memoryChase);
 })
