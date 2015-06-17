@@ -139,37 +139,63 @@ function BatalhaViewModel()
 
     this.capturar = function(presa, cartaCacador) {
         self.marcaPonto(cartaDaUltimaPresaAberta.morador);
-        var cacadorCelula = $("#"+cartaCacador.id)
+        var cacadorCelula = $("#"+cartaCacador.id);
 
-        var cacadorAnimado = $(".chase")
+        var cacadorAnimado = $(".chase");
         cacadorAnimado.show();
-
         cacadorAnimado.offset({
             top:  cacadorCelula.offset().top,
             left: cacadorCelula.offset().left
         });
-        cacadorAnimado.width(cacadorCelula.width())
-        cacadorAnimado.height(cacadorCelula.height())
+        cacadorAnimado.width(cacadorCelula.width());
+        cacadorAnimado.height(cacadorCelula.height());
 
         var cacador = cartaCacador.morador;
         cacadorAnimado.css("background-image", cacador.imagemMorador());
+
+
         cartaCacador.mostraCasa();
 
         var posicaoDaPresa = $("#"+presa.id).parent().parent().offset();
         var som = cacador.somMorador();
         app.play(som);
-        cacadorAnimado
-            .velocity({left: posicaoDaPresa.left}, 800, "easeInQuad")
-            .velocity({top:  posicaoDaPresa.top}, 800, "easeInQuad",
-            function(){
-                cacadorAnimado.hide();
-                presa.marcaCapturado(cacador);
 
-                app.defer(function() {
-                    som.pause();
-                    som.currentTime=0;
-                },1000)
-            });
+        var xTranslation = posicaoDaPresa.left-cacadorCelula.offset().left;
+        cacadorAnimado.addClass("chase-animation")
+        cacadorAnimado.css("transform", "translate3d(" +xTranslation + "px,0,0)");
+        cacadorAnimado.one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+            function() {
+                var yTranslation = posicaoDaPresa.top-cacadorCelula.offset().top;
+                cacadorAnimado.css("transform", "translate3d(" +xTranslation + "px," +yTranslation + "px,0)");
+                cacadorAnimado.one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+                    function() {
+                        cacadorAnimado.hide();
+                        cacadorAnimado.removeClass("chase-animation");
+                        cacadorAnimado.css("transform", "none");
+
+                        presa.marcaCapturado(cacador);
+
+                        app.defer(function() {
+                            som.pause();
+                            som.currentTime=0;
+                        },1000)
+                    })
+
+            })
+
+
+        //cacadorAnimado
+        //    .velocity({left: posicaoDaPresa.left}, 800, "easeInQuad")
+        //    .velocity({top:  posicaoDaPresa.top}, 800, "easeInQuad",
+        //    function(){
+        //        cacadorAnimado.hide();
+        //        presa.marcaCapturado(cacador);
+        //
+        //        app.defer(function() {
+        //            som.pause();
+        //            som.currentTime=0;
+        //        },1000)
+        //    });
     }
 
     this.reiniciar = function() {

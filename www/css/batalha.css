@@ -102,8 +102,8 @@ body {
     position: absolute;
     width: 100px;
     height: 100px;
-    top: 100px;
-    left: 100px;
+    top: 0px;
+    left: 0px;
     background-image: url("../imgs/policia.jpg");
     background-size: 100%;
     background-repeat: no-repeat;
@@ -112,6 +112,13 @@ body {
     display: none;
     padding: 0px;
     margin: 0px;
+}
+
+.chase-animation {
+    -webkit-transition: .8s ease-in-out;
+    -moz-transition:    .8s ease-in-out;
+    -o-transition:      .8s ease-in-out;
+    transition:         .8s ease-in-out;
 }
 
 .score-problema {

@@ -1,9 +1,10 @@
 var app = new function() {
+    var self=this;
     this.BOARD_SIZE = 5;
-    var isSfxEnabled = true;
+    this.isSfxEnabled = ko.observable(false);
 
     this.play = function(audio) {
-        if (isSfxEnabled) {
+        if (self.isSfxEnabled()) {
             audio.play();
         }
     }
