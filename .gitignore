@@ -3,3 +3,4 @@ bower_components/
 tmp
 platforms
 plugins
+node_modules
