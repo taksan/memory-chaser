@@ -161,17 +161,17 @@ function BatalhaViewModel()
         app.play(som);
 
         var xTranslation = posicaoDaPresa.left-cacadorCelula.offset().left;
-        cacadorAnimado.addClass("chase-animation")
-        cacadorAnimado.css("transform", "translate3d(" +xTranslation + "px,0,0)");
+        cacadorAnimado.transition(".7s ease-in-out");
+        cacadorAnimado.transform("translate3d(" +xTranslation + "px,0,0)");
         cacadorAnimado.one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
             function() {
                 var yTranslation = posicaoDaPresa.top-cacadorCelula.offset().top;
-                cacadorAnimado.css("transform", "translate3d(" +xTranslation + "px," +yTranslation + "px,0)");
+                cacadorAnimado.transform("translate3d(" +xTranslation + "px," +yTranslation + "px,0)");
                 cacadorAnimado.one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
                     function() {
                         cacadorAnimado.hide();
-                        cacadorAnimado.removeClass("chase-animation");
-                        cacadorAnimado.css("transform", "none");
+                        cacadorAnimado.disableTransitions();
+                        cacadorAnimado.transform("none");
 
                         presa.marcaCapturado(cacador);
 
@@ -182,20 +182,6 @@ function BatalhaViewModel()
                     })
 
             })
-
-
-        //cacadorAnimado
-        //    .velocity({left: posicaoDaPresa.left}, 800, "easeInQuad")
-        //    .velocity({top:  posicaoDaPresa.top}, 800, "easeInQuad",
-        //    function(){
-        //        cacadorAnimado.hide();
-        //        presa.marcaCapturado(cacador);
-        //
-        //        app.defer(function() {
-        //            som.pause();
-        //            som.currentTime=0;
-        //        },1000)
-        //    });
     }
 
     this.reiniciar = function() {

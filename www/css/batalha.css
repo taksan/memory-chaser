@@ -114,13 +114,6 @@ body {
     margin: 0px;
 }
 
-.chase-animation {
-    -webkit-transition: .8s ease-in-out;
-    -moz-transition:    .8s ease-in-out;
-    -o-transition:      .8s ease-in-out;
-    transition:         .8s ease-in-out;
-}
-
 .score-problema {
     max-width: 48px;
     max-height: 48px;

@@ -12,12 +12,15 @@ var app = new function() {
     this.defer = function(fn, timeout) {
         return setTimeout(fn, timeout);
     }
-}
+};
 
 function inicializaAjustesDinamicosDoDom() {
     $(function() {
         FastClick.attach(document.body);
     });
+    document.addEventListener('deviceready', function() {
+        FastClick.attach(document.body);
+    }, false);
 
     $(function() {
         var tamPeca = 0;
@@ -37,15 +40,15 @@ function inicializaAjustesDinamicosDoDom() {
         msg.offset({top: ((app.BOARD_SIZE*tamPeca)-msg.height())/2});
 
         $(".celula").livequery(function() {
-            $(this).css("display","inline-block")
-            $(this).width(tamPeca)
-            $(this).height(tamPeca)
-        })
+            $(this).css("display","inline-block");
+            $(this).width(tamPeca);
+            $(this).height(tamPeca);
+        });
 
         $(".pedra").livequery(function() {
-            $(this).width(tamPeca)
-            $(this).height(tamPeca)
-        })
+            $(this).width(tamPeca);
+            $(this).height(tamPeca);
+        });
 
         $(".gotcha").livequery(function() {
             $(this).css("max-width",tamPeca/3);
