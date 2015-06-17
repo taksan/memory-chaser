@@ -1,5 +1,4 @@
 body {
-    font-family: Lobster;
     background-image: url(../imgs/fundo-cidade.jpg);
     text-align: center;
     transform: translateZ(0)
@@ -21,11 +20,40 @@ body {
     font-size: 20px;
 }
 
+.contador {
+    float: left;
+    margin-left: 20px;
+}
+
+.contador img {
+    border: none;
+    vertical-align: middle;
+    max-width: 32px;
+    max-height: 32px;
+}
+
+.tempo {
+    float: right;
+    margin-right: 20px;
+}
+.tempo span {
+    text-align: right;
+}
+
+.tempo img {
+    border: none;
+    max-width: 32px;
+    max-height: 32px;
+    vertical-align: middle;
+}
+
 .painel-problemas {
     width: 100%;
 }
 .painel-score {
     margin-bottom: 10px;
+    float: left;
+    width: 100%;
 }
 
 .mensagem {

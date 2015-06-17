@@ -26,8 +26,8 @@
 </head>
 <body>
 <div class="painel-score">
-    <span class="score">Cartas : <span data-bind="text:blocos_abertos"/> </span>
-    <span class="score">Tempo: <span data-bind="text:tempo_decorrido"></span>s</span>
+    <span class="score contador"><img src="imgs/cartas.png"> <span data-bind="text:blocos_abertos"></span> </span>
+    <span class="score tempo"><span data-bind="text:tempo_decorrido()"></span><img src="imgs/clock.png"></span>
 </div>
 <div class="tabuleiro">
     <!-- ko foreach: linhas -->
